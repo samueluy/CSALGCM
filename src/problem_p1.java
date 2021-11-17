@@ -1,12 +1,13 @@
 import java.util.Scanner;
 import java.util.Stack;
 import java.util.ArrayList;
+
 public class problem_p1 {
     private void program_run(ArrayList<String> input) {
         Stack<Character> values = new Stack(); // Declare stack data structure
         String item;
 
-        for(int i=0; i<input.size(); i++){ // itterate through all values in array list
+        for(int i=1; i<input.size(); i++){ // itterate through all values in array list
             boolean valid = true;
             item = input.get(i);
             for(int y=0; y<item.length(); y++) { //itterate through all characters of the string
@@ -35,6 +36,12 @@ public class problem_p1 {
                                 valid = false;
                             }
                     }
+                    else{
+                        System.out.println("Invalid input");
+                        valid=false;
+                        y=item.length();
+                }
+
             }
             if(values.empty() && valid)  // Check if current stack is empty and valid
                 System.out.println("Yes");
@@ -48,10 +55,9 @@ public class problem_p1 {
         problem_p1 P1 = new problem_p1();
         ArrayList<String>  input = new ArrayList();
         Scanner in = new Scanner(System.in);
-        int n=in.nextInt(); // Ask for n value
-        in.nextLine(); // clear input buffer
 
-        for(int i=0; i<n; i++)
+        input.add(in.nextLine());
+        for(int i=0; i<Integer.parseInt(input.get(0)); i++)
             input.add(in.nextLine());
 
         P1.program_run(input);
