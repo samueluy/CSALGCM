@@ -16,7 +16,7 @@ public class problem_2 {
 
         Arrays.sort(numbers, Collections.reverseOrder()); // sort the array in decending order
 
-        for(int i=0; i<size; i++){
+        for(int i=0; i<size; i++){ // every third number, add that number to the discount total then reset the counter
             if(counter==2){
                 total+=numbers[i];
                 counter=-1;
