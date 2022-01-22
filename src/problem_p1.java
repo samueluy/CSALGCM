@@ -1,58 +1,87 @@
-import java.util.Scanner;
-import java.util.Stack;
-import java.util.ArrayList;
+import java.util.*;
 
-public class problem_p1 {
-    private void program_run(ArrayList<String> input) {
-        Stack<Character> values = new Stack(); // Declare stack data structure
-        String item;
+public class problem_1 {
+    void program_run(ArrayList<String> input) {
+        ArrayList<Integer> positive = new ArrayList<>();
+        ArrayList<Integer> negative = new ArrayList<>();
+        int floorCount=0;
 
-        for(int i=1; i<input.size(); i++){ // itterate through all values in array list
-            boolean valid = true;
-            item = input.get(i);
-            for(int y=0; y<item.length(); y++) { //itterate through all characters of the string
-                char ch = item.charAt(y);
-                if(ch == '(' || ch == '[')
-                    values.push(item.charAt(y)); // push opening parenthesis or bracket to stack
-                else if(values.empty()){ // terminate if current stack is empty
-                    y=item.length();
-                    valid = false;
-                }
-                else if(ch == ')') {
-                    if (values.pop() != '(') {
-                        y = item.length(); // Terminate loop
-                        valid = false;
-                    }
-                }
-                    else if(ch == ')') {
-                        if (values.pop() != '(') {
-                            y = item.length(); // Terminate loop
-                            valid = false;
-                        }
-                    }
-                    else if (ch == ']') {
-                            if (values.pop() != '[') {
-                                y = item.length(); // Terminate loop
-                                valid = false;
-                            }
-                    }
-                    else{
-                        System.out.println("Invalid input");
-                        valid=false;
-                        y=item.length();
-                }
 
-            }
-            if(values.empty() && valid)  // Check if current stack is empty and valid
-                System.out.println("Yes");
-            else System.out.println("No");
-            values.clear();
+        for (int i = 1; i < input.size(); i++) { // Add each floor to its respective ArrayList
+            int n = Integer.parseInt(input.get(i));
+            if (n > 0) positive.add(n);
+            else if (n < 0) negative.add(n);
         }
-        input.clear(); // Clear stack
+
+        // Sort array lists
+        Collections.sort(positive);
+        Collections.reverse(positive);
+        Collections.sort(negative);
+
+        // add all elements of positive to queue
+        Queue<Integer> positiveQueue = new LinkedList<>(positive);
+        Queue<Integer> negativeQueue = new LinkedList<>(negative);
+
+        if(!positiveQueue.isEmpty() && !negativeQueue.isEmpty()){
+            if(positiveQueue.peek() > Math.abs(negativeQueue.peek()))
+                System.out.println(getFloors(positiveQueue, negativeQueue));
+            else
+                System.out.println(getFloors(negativeQueue,positiveQueue));
+        }
+        else if (!positiveQueue.isEmpty() || !negativeQueue.isEmpty()) // if either one is empty
+            System.out.println(1);
+        else // both are empty
+            System.out.println(0);
+
     }
 
+    int getFloors(Queue<Integer> firstQueue, Queue<Integer> secondQueue){
+        ArrayList<Integer> result = new ArrayList<>();
+        int resultIndex=-1;
+        boolean flag=true;
+        // add the largest number to result
+        result.add(Math.abs(firstQueue.remove()));
+
+        // while both queues are still not empty || in order
+        while(flag){
+            boolean run=true;
+            resultIndex++;
+            while(run) { // repeatedly dequeue secondQueue until a smaller abs(n) is found
+                if (!secondQueue.isEmpty()) {
+                    int n = Math.abs(secondQueue.remove());
+
+                    if (n < Math.abs(result.get(resultIndex))) {
+                        result.add(n);
+                        break;
+                    }
+                } else{
+                    flag=false;
+                    run = false;
+                }
+            }
+            if(!flag)
+                break;
+
+            resultIndex++;
+            while(run){ // repeatedly dequeue firstQueue until a smaller abs(n) is found
+                if(!firstQueue.isEmpty()){
+                    int n = Math.abs(firstQueue.remove());
+                    if(n < Math.abs(result.get(resultIndex))){
+                        result.add(n);
+                        break;
+                    }
+                }
+                else{
+                    flag=false;
+                    run=false;
+                }
+            }
+        }
+
+        return result.size();
+    }
     public static void main(String[] args){
-        problem_p1 P1 = new problem_p1();
+        problem_1 P1 = new problem_1();
         ArrayList<String>  input = new ArrayList();
         Scanner in = new Scanner(System.in);
 
