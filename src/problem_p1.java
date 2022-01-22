@@ -4,8 +4,6 @@ public class problem_1 {
     void program_run(ArrayList<String> input) {
         ArrayList<Integer> positive = new ArrayList<>();
         ArrayList<Integer> negative = new ArrayList<>();
-        int floorCount=0;
-
 
         for (int i = 1; i < input.size(); i++) { // Add each floor to its respective ArrayList
             int n = Integer.parseInt(input.get(i));
