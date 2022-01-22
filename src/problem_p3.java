@@ -1,46 +1,36 @@
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.Hashtable;
-
-public class problem_p3 {
-    static int counter=0;
-
-    Hashtable<Integer, Integer> convert (ArrayList<String> input){
-        Hashtable<Integer, Integer> values = new Hashtable<>();
-        String[] initial;
-        initial = input.get(1).split("\\s+"); // get train order
-
-        for(int i=1; i<=Integer.parseInt(input.get(0)); i++) {
-            values.put(i, Integer.parseInt(initial[i-1]));
-        }
-        return values;
+import java.util.*;
+public class problem_3 {
+    void program_run(ArrayList<String> input) {
+        String[] temp = input.get(0).split("\\s+");
+        if (Integer.parseInt(temp[0]) != input.get(1).length()) System.out.println("Invalid Input");
+        else if (Integer.parseInt(temp[0]) == 0) System.out.println();
+        else System.out.println(getMin(input.get(1), Integer.parseInt(temp[1])));
     }
 
-    void insertionSort(ArrayList<String> input){
-        Hashtable<Integer, Integer> values;
-        values = convert(input);
+    long getMin(String n, int k){
+        long min = Long.parseLong(n); // Integer.parseInt can not take high values
+        String curN;
 
-        for(int i=2; i<=Integer.parseInt(input.get(0)); i++){
-            int holder = values.get(i);
-            int y = i-1;
-            while(y>0 && holder < values.get(y)){
-                values.put(y+1, values.get(y));
-                y--;
-                counter++;
+        for(int i=0; i<k; i++){
+            curN = String.valueOf(min);
+            for(int y=0; y<curN.length(); y++){
+                StringBuilder temp = new StringBuilder();
+                temp.append(curN); // copy n to temp
+                temp.deleteCharAt(y); // deletes char at y
+                if(temp.charAt(0) != '0') // no trailing zero
+                    min = Long.min(min, Integer.parseInt(temp.toString())); // stores the minimum value
             }
-            values.put(y+1, holder);
         }
+        return min;
     }
-
     public static void main(String[] args){
-        problem_p3 P3 = new problem_p3();
+        problem_3 P3 = new problem_3();
         ArrayList<String>  input = new ArrayList();
         Scanner in = new Scanner(System.in);
 
-        for(int i=0; i<2; i++)
-            input.add(in.nextLine());
+        input.add(in.nextLine());
+        input.add(in.nextLine());
 
-        P3.insertionSort(input);
-        System.out.println("The most optimal train swaps: " +  counter);
+        P3.program_run(input);
     }
 }
