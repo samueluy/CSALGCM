@@ -1,109 +1,46 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
-import java.util.Queue;
-import java.util.LinkedList;
 
-public class problem_p2 {
-    static int totalTime=0;
+public class P3 {
 
-    private void program_run(ArrayList<String> input) {
+    void printLCS(String X, String Y) {
+        int lenX = X.length();
+        int lenY = Y.length();
+        int[][] matrix = new int[lenX + 1][lenY + 1];
 
-        Queue<Integer> time = new LinkedList<>();
-        Queue<String> direction = new LinkedList<>();
-
-        int nCars=0; // number of cars on ship
-        boolean side=true; // true = left, false = right
-        boolean tempSide=true; // side of next
-        boolean first=true;
-        boolean last=false;
-
-        String[] initial = input.get(0).split("\\s+"); // get first input
-        String[] temp;
-        int n = Integer.parseInt(initial[0]); // set m to first value
-        int t = Integer.parseInt(initial[1]); // set m to second value
-        int m = Integer.parseInt(initial[2]); // set m to third value
-
-        for(int i = 0; i<m; i++) { // set up dictionary
-            temp = input.get(i + 1).split("\\s+"); // convert array list input into a string array
-            time.add(Integer.parseInt(temp[0])); // add time to queue
-            direction.add(temp[1]); // add distance to queue
+        for (int i = 0; i < lenX + 1; i++) {
+            for (int j = 0; j < lenY + 1; j++) {
+                if (i == 0 || j == 0) matrix[i][j] = 0;
+                else if (X.charAt(i - 1) == Y.charAt(j - 1)) matrix[i][j] = matrix[i - 1][j - 1] + 1;
+                else matrix[i][j] = Math.max(matrix[i - 1][j], matrix[i][j - 1]);
+            }
         }
+        ArrayList<Character> result = matrixBacktrack(matrix, X, Y, X.length(), Y.length());
+        Collections.reverse(result); // reverse array list
+        for (Character character : result) System.out.print(character);
+    }
 
-        for(int i=0; i<m; i++) {
-            System.out.println("PEEK: " + time.peek() + ", " + direction.peek());
-
-            switch(direction.peek()) { // set tempSide
-                case "left":
-                    tempSide = true;
-                    break;
-                case "right":
-                    tempSide = false;
-                    break;
-            }
-
-            if (first) { // Check if car time to arrive is longer than total time and car count is still lower than max
-                switch (direction.remove()) {
-                    case "left":
-                        totalTime += time.remove() + t;
-                        side = false;
-                        break;
-                    case "right":
-                        totalTime += time.remove() + (2 * t);
-                        side = true;
-                        break;
-                }
-                first = false;
-
-            } else if (nCars == n || totalTime <= time.peek() || last) {
-                nCars = 0; // unload
-                switch (direction.remove()) { // check side
-                    case "left":
-                        if (side) {
-                            totalTime += t; // add time of arrival and transport time to totalTime
-                            side = false;
-                        } else if (!side && tempSide) {
-                            totalTime += (2 * t);
-                            side = false;
-                        } else {
-                            totalTime += (2 * t); // double t for back and forth
-                            side = true;
-                        }
-                        break;
-
-                    case "right":
-                        if (side) {
-                            totalTime += (2 * t); // double t for back and forth
-                            side = false;
-                        } else {
-                            totalTime += t; // add time of arival and transport time to totalTime
-                            side = true;
-                        }
-                        break;
-                }
-                time.remove();
-            }
-            else{
-                nCars++;
-                time.remove();
-                direction.remove();
-            }
-            System.out.println(totalTime);
+    ArrayList<Character> matrixBacktrack(int[][] matrix, String str1, String str2, int i, int j) {
+        ArrayList<Character> result = new ArrayList<>();
+        while (i > 0 && j > 0) {
+            if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+                result.add(str1.charAt(i - 1));
+                i--;
+                j--;
+            } else if (matrix[i - 1][j] > matrix[i][j - 1]) i--;
+            else j--;
         }
+        return result;
     }
 
     public static void main(String[] args) {
-        problem_p2 P2 = new problem_p2();
-        ArrayList<String> input = new ArrayList();
+        P3 problem_p2 = new P3();
         Scanner in = new Scanner(System.in);
 
-        String set = in.nextLine(); // Ask for n,t,m
-        input.add(set);
+        String X = in.nextLine();
+        String Y = in.nextLine();
 
-        String[] initial = input.get(0).split("\\s+"); // get first input
-        int m = Integer.parseInt(initial[2]); // set m to third value
-        for(int i=0; i<m; i++) // ask for input m times
-            input.add(in.nextLine());
-
-        P2.program_run(input);
+        problem_p2.printLCS(X, Y);
     }
 }
