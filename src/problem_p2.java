@@ -1,46 +1,61 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
 
-public class P3 {
+public class P2 {
 
-    void printLCS(String X, String Y) {
-        int lenX = X.length();
-        int lenY = Y.length();
-        int[][] matrix = new int[lenX + 1][lenY + 1];
+    void partyBudget(ArrayList<String> inputs) {
+        String[] initial = inputs.get(0).split("\\s");
+        int budget = Integer.parseInt(initial[0]);
+        int[] cost = new int[inputs.size() - 1];
+        int[] fun = new int[inputs.size() - 1];
+        int[][] matrix = new int[inputs.size()][budget + 1];
 
-        for (int i = 0; i < lenX + 1; i++) {
-            for (int j = 0; j < lenY + 1; j++) {
-                if (i == 0 || j == 0) matrix[i][j] = 0;
-                else if (X.charAt(i - 1) == Y.charAt(j - 1)) matrix[i][j] = matrix[i - 1][j - 1] + 1;
-                else matrix[i][j] = Math.max(matrix[i - 1][j], matrix[i][j - 1]);
+        for (int i = 1; i < inputs.size(); i++) { // Store the values on each array
+            String[] temp = inputs.get(i).split("\\s");
+            cost[i - 1] = Integer.parseInt(temp[0]);
+            fun[i - 1] = Integer.parseInt(temp[1]);
+        }
+        inputs.remove(0); // Remove initial input
+
+        for (int i = 0; i <= inputs.size(); i++) {
+            for (int j = 0; j <= budget; j++) {
+                if (i == 0 || j == 0) //Empty
+                    matrix[i][j] = 0;
+                else if (cost[i - 1] <= j) {
+                    matrix[i][j] = Math.max(fun[i - 1] + matrix[i - 1][j - cost[i - 1]], matrix[i - 1][j]);
+                } else matrix[i][j] = matrix[i - 1][j];
             }
         }
-        ArrayList<Character> result = matrixBacktrack(matrix, X, Y, X.length(), Y.length());
-        Collections.reverse(result); // reverse array list
-        for (Character character : result) System.out.print(character);
-    }
+        int spent = 0;
+        int budgetIndex = budget;
 
-    ArrayList<Character> matrixBacktrack(int[][] matrix, String str1, String str2, int i, int j) {
-        ArrayList<Character> result = new ArrayList<>();
-        while (i > 0 && j > 0) {
-            if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
-                result.add(str1.charAt(i - 1));
-                i--;
-                j--;
-            } else if (matrix[i - 1][j] > matrix[i][j - 1]) i--;
-            else j--;
+        for (int inputIndex = inputs.size(); inputIndex > 0; inputIndex--) {
+            if (matrix[inputIndex][budgetIndex] != matrix[inputIndex - 1][budgetIndex]) {
+                budgetIndex = budgetIndex - cost[inputIndex - 1];
+                spent += cost[inputIndex - 1];
+            }
         }
-        return result;
+        System.out.println(spent + " " + matrix[inputs.size()][budget]);
     }
 
     public static void main(String[] args) {
-        P3 problem_p2 = new P3();
+        P2 problem_p2 = new P2();
+        ArrayList<String> inputs = new ArrayList<>();
         Scanner in = new Scanner(System.in);
 
-        String X = in.nextLine();
-        String Y = in.nextLine();
+        inputs.add(in.nextLine()); // First input
+        String[] temp = inputs.get(0).split("\\s"); // split first input
 
-        problem_p2.printLCS(X, Y);
+        int n = Integer.parseInt(temp[1]);
+        for (int i = 0; i < n; i++)
+            inputs.add(in.nextLine()); // get values
+
+        problem_p2.partyBudget(inputs);
     }
 }
+
+/*
+https://www.geeksforgeeks.org/0-1-knapsack-problem-dp-10/
+https://www.gatevidyalay.com/0-1-knapsack-problem-using-dynamic-programming-approach/
+https://www.guru99.com/knapsack-problem-dynamic-programming.html#:~:text=The%20basic%20idea%20of%20Knapsack,dynamic%20programming%20are%20very%20effective.
+ */
